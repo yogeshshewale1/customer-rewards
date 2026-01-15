@@ -1,0 +1,42 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* Sidebar behavior: Remains static during middle scroll */
+.sticky-sidebar {
+    position: sticky;
+    top: 70px; /* Adjust based on navbar height */
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+}
+
+/* Styling for buttons and accents */
+.btn-danger {
+    background-color: #ff4d8d; /* Matching the pinkish-red in the images */
+    border: none;
+}
+
+.btn-outline-danger {
+    color: #ff4d8d;
+    border-color: #ff4d8d;
+}
+
+.btn-outline-danger:hover {
+    background-color: #ff4d8d;
+    border-color: #ff4d8d;
+}
+
+.nav-link {
+    font-weight: 500;
+    margin: 0 10px;
+}
+
+main {
+    line-height: 1.6;
+}
+
+.author-box {
+    margin-top: 50px;
+    border-left: 5px solid #ff4d8d;
+}
