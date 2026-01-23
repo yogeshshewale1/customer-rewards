@@ -1,0 +1,101 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+interface Menu {
+  name: string;
+  price: number;
+}
+
+@Component({
+  selector: 'app-menu',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <h2>Menu Management</h2>
+
+    <!-- Add / Edit Form -->
+    <div style="margin-bottom:15px">
+      <input
+        type="text"
+        placeholder="Menu Name"
+        [(ngModel)]="menuForm.name"
+      />
+
+      <input
+        type="number"
+        placeholder="Price"
+        [(ngModel)]="menuForm.price"
+      />
+
+      <button (click)="saveMenu()">
+        {{ editingIndex === -1 ? 'Add Menu' : 'Update Menu' }}
+      </button>
+
+      <button *ngIf="editingIndex !== -1" (click)="cancelEdit()">
+        Cancel
+      </button>
+    </div>
+
+    <!-- Menu Table -->
+    <table border="1" width="60%">
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+
+      <tr *ngFor="let menu of menus; let i = index">
+        <td>{{ menu.name }}</td>
+        <td>{{ menu.price }}</td>
+        <td>
+          <button (click)="editMenu(i)">Edit</button>
+          <button (click)="deleteMenu(i)">Delete</button>
+        </td>
+      </tr>
+    </table>
+  `
+})
+export class MenuComponent {
+  menus: Menu[] = [
+    { name: 'Pizza', price: 250 },
+    { name: 'Burger', price: 150 }
+  ];
+
+  menuForm: Menu = { name: '', price: 0 };
+  editingIndex = -1;
+
+  saveMenu() {
+    if (!this.menuForm.name || this.menuForm.price <= 0) {
+      alert('Enter valid menu details');
+      return;
+    }
+
+    if (this.editingIndex === -1) {
+      // ADD
+      this.menus.push({ ...this.menuForm });
+    } else {
+      // UPDATE
+      this.menus[this.editingIndex] = { ...this.menuForm };
+      this.editingIndex = -1;
+    }
+
+    this.menuForm = { name: '', price: 0 };
+  }
+
+  editMenu(index: number) {
+    this.menuForm = { ...this.menus[index] };
+    this.editingIndex = index;
+  }
+
+  deleteMenu(index: number) {
+    if (confirm('Are you sure?')) {
+      this.menus.splice(index, 1);
+    }
+  }
+
+  cancelEdit() {
+    this.menuForm = { name: '', price: 0 };
+    this.editingIndex = -1;
+  }
+}
