@@ -3,99 +3,114 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 interface Restaurant {
+  id: number;
   name: string;
-  location: string;
+}
+
+interface Menu {
+  id: number;
+  restaurantId: number;
+  name: string;
+  price: number;
 }
 
 @Component({
-  selector: 'app-restaurant',
+  selector: 'app-user',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <h2>Restaurant Management</h2>
+    <h2>User Order Dashboard</h2>
 
-    <!-- Add / Edit Form -->
-    <div style="margin-bottom:15px">
-      <input
-        type="text"
-        placeholder="Restaurant Name"
-        [(ngModel)]="restaurantForm.name"
-      />
-
-      <input
-        type="text"
-        placeholder="Location"
-        [(ngModel)]="restaurantForm.location"
-      />
-
-      <button (click)="saveRestaurant()">
-        {{ editingIndex === -1 ? 'Add Restaurant' : 'Update Restaurant' }}
-      </button>
-
-      <button *ngIf="editingIndex !== -1" (click)="cancelEdit()">
-        Cancel
-      </button>
+    <!-- STEP 1: Select Restaurant -->
+    <div>
+      <label>Select Restaurant:</label>
+      <select [(ngModel)]="selectedRestaurantId" (change)="onRestaurantChange()">
+        <option value="">-- Select --</option>
+        <option *ngFor="let r of restaurants" [value]="r.id">
+          {{ r.name }}
+        </option>
+      </select>
     </div>
 
-    <!-- Restaurant Table -->
-    <table border="1" width="60%">
-      <tr>
-        <th>Name</th>
-        <th>Location</th>
-        <th>Actions</th>
-      </tr>
+    <!-- STEP 2: Display Menu -->
+    <div *ngIf="filteredMenus.length > 0" style="margin-top:15px">
+      <h3>Menu</h3>
 
-      <tr *ngFor="let restaurant of restaurants; let i = index">
-        <td>{{ restaurant.name }}</td>
-        <td>{{ restaurant.location }}</td>
-        <td>
-          <button (click)="editRestaurant(i)">Edit</button>
-          <button (click)="deleteRestaurant(i)">Delete</button>
-        </td>
-      </tr>
-    </table>
+      <div *ngFor="let menu of filteredMenus">
+        <input
+          type="checkbox"
+          [checked]="selectedMenuIds.includes(menu.id)"
+          (change)="toggleMenu(menu.id)"
+        />
+        {{ menu.name }} - ₹{{ menu.price }}
+      </div>
+    </div>
+
+    <!-- STEP 3: Place Order -->
+    <div style="margin-top:20px">
+      <button (click)="placeOrder()">Place Order</button>
+    </div>
+
+    <!-- STEP 4: Confirmation -->
+    <div *ngIf="orderStatus === 'SUCCESS'" style="color:green; margin-top:15px">
+      ✅ Order placed successfully!
+    </div>
+
+    <div *ngIf="orderStatus === 'FAIL'" style="color:red; margin-top:15px">
+      ❌ Order failed. Please select restaurant and menu.
+    </div>
   `
 })
-export class RestaurantComponent {
+export class UserComponent {
+
+  // Mock Restaurants
   restaurants: Restaurant[] = [
-    { name: 'Food Hub', location: 'Mumbai' },
-    { name: 'Spice Villa', location: 'Pune' }
+    { id: 1, name: 'Food Hub' },
+    { id: 2, name: 'Spice Villa' }
   ];
 
-  restaurantForm: Restaurant = { name: '', location: '' };
-  editingIndex = -1;
+  // Mock Menus (Assigned to Restaurant)
+  menus: Menu[] = [
+    { id: 1, restaurantId: 1, name: 'Pizza', price: 250 },
+    { id: 2, restaurantId: 1, name: 'Burger', price: 150 },
+    { id: 3, restaurantId: 2, name: 'Paneer Masala', price: 220 },
+    { id: 4, restaurantId: 2, name: 'Dal Fry', price: 180 }
+  ];
 
-  saveRestaurant() {
-    if (!this.restaurantForm.name || !this.restaurantForm.location) {
-      alert('Enter valid restaurant details');
+  selectedRestaurantId: number | '' = '';
+  filteredMenus: Menu[] = [];
+  selectedMenuIds: number[] = [];
+
+  orderStatus: 'SUCCESS' | 'FAIL' | '' = '';
+
+  onRestaurantChange() {
+    this.filteredMenus = this.menus.filter(
+      m => m.restaurantId === Number(this.selectedRestaurantId)
+    );
+    this.selectedMenuIds = [];
+    this.orderStatus = '';
+  }
+
+  toggleMenu(menuId: number) {
+    if (this.selectedMenuIds.includes(menuId)) {
+      this.selectedMenuIds = this.selectedMenuIds.filter(id => id !== menuId);
+    } else {
+      this.selectedMenuIds.push(menuId);
+    }
+  }
+
+  placeOrder() {
+    if (!this.selectedRestaurantId || this.selectedMenuIds.length === 0) {
+      this.orderStatus = 'FAIL';
       return;
     }
 
-    if (this.editingIndex === -1) {
-      // ADD
-      this.restaurants.push({ ...this.restaurantForm });
-    } else {
-      // UPDATE
-      this.restaurants[this.editingIndex] = { ...this.restaurantForm };
-      this.editingIndex = -1;
-    }
+    // Simulate API success
+    this.orderStatus = 'SUCCESS';
 
-    this.restaurantForm = { name: '', location: '' };
-  }
-
-  editRestaurant(index: number) {
-    this.restaurantForm = { ...this.restaurants[index] };
-    this.editingIndex = index;
-  }
-
-  deleteRestaurant(index: number) {
-    if (confirm('Are you sure?')) {
-      this.restaurants.splice(index, 1);
-    }
-  }
-
-  cancelEdit() {
-    this.restaurantForm = { name: '', location: '' };
-    this.editingIndex = -1;
+    // Reset after success
+    this.selectedRestaurantId = '';
+    this.filteredMenus = [];
+    this.selectedMenuIds = [];
   }
 }
