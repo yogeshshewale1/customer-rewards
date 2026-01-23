@@ -2,34 +2,34 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-interface Menu {
+interface Restaurant {
   name: string;
-  price: number;
+  location: string;
 }
 
 @Component({
-  selector: 'app-menu',
+  selector: 'app-restaurant',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <h2>Menu Management</h2>
+    <h2>Restaurant Management</h2>
 
     <!-- Add / Edit Form -->
     <div style="margin-bottom:15px">
       <input
         type="text"
-        placeholder="Menu Name"
-        [(ngModel)]="menuForm.name"
+        placeholder="Restaurant Name"
+        [(ngModel)]="restaurantForm.name"
       />
 
       <input
-        type="number"
-        placeholder="Price"
-        [(ngModel)]="menuForm.price"
+        type="text"
+        placeholder="Location"
+        [(ngModel)]="restaurantForm.location"
       />
 
-      <button (click)="saveMenu()">
-        {{ editingIndex === -1 ? 'Add Menu' : 'Update Menu' }}
+      <button (click)="saveRestaurant()">
+        {{ editingIndex === -1 ? 'Add Restaurant' : 'Update Restaurant' }}
       </button>
 
       <button *ngIf="editingIndex !== -1" (click)="cancelEdit()">
@@ -37,65 +37,65 @@ interface Menu {
       </button>
     </div>
 
-    <!-- Menu Table -->
+    <!-- Restaurant Table -->
     <table border="1" width="60%">
       <tr>
         <th>Name</th>
-        <th>Price</th>
+        <th>Location</th>
         <th>Actions</th>
       </tr>
 
-      <tr *ngFor="let menu of menus; let i = index">
-        <td>{{ menu.name }}</td>
-        <td>{{ menu.price }}</td>
+      <tr *ngFor="let restaurant of restaurants; let i = index">
+        <td>{{ restaurant.name }}</td>
+        <td>{{ restaurant.location }}</td>
         <td>
-          <button (click)="editMenu(i)">Edit</button>
-          <button (click)="deleteMenu(i)">Delete</button>
+          <button (click)="editRestaurant(i)">Edit</button>
+          <button (click)="deleteRestaurant(i)">Delete</button>
         </td>
       </tr>
     </table>
   `
 })
-export class MenuComponent {
-  menus: Menu[] = [
-    { name: 'Pizza', price: 250 },
-    { name: 'Burger', price: 150 }
+export class RestaurantComponent {
+  restaurants: Restaurant[] = [
+    { name: 'Food Hub', location: 'Mumbai' },
+    { name: 'Spice Villa', location: 'Pune' }
   ];
 
-  menuForm: Menu = { name: '', price: 0 };
+  restaurantForm: Restaurant = { name: '', location: '' };
   editingIndex = -1;
 
-  saveMenu() {
-    if (!this.menuForm.name || this.menuForm.price <= 0) {
-      alert('Enter valid menu details');
+  saveRestaurant() {
+    if (!this.restaurantForm.name || !this.restaurantForm.location) {
+      alert('Enter valid restaurant details');
       return;
     }
 
     if (this.editingIndex === -1) {
       // ADD
-      this.menus.push({ ...this.menuForm });
+      this.restaurants.push({ ...this.restaurantForm });
     } else {
       // UPDATE
-      this.menus[this.editingIndex] = { ...this.menuForm };
+      this.restaurants[this.editingIndex] = { ...this.restaurantForm };
       this.editingIndex = -1;
     }
 
-    this.menuForm = { name: '', price: 0 };
+    this.restaurantForm = { name: '', location: '' };
   }
 
-  editMenu(index: number) {
-    this.menuForm = { ...this.menus[index] };
+  editRestaurant(index: number) {
+    this.restaurantForm = { ...this.restaurants[index] };
     this.editingIndex = index;
   }
 
-  deleteMenu(index: number) {
+  deleteRestaurant(index: number) {
     if (confirm('Are you sure?')) {
-      this.menus.splice(index, 1);
+      this.restaurants.splice(index, 1);
     }
   }
 
   cancelEdit() {
-    this.menuForm = { name: '', price: 0 };
+    this.restaurantForm = { name: '', location: '' };
     this.editingIndex = -1;
   }
 }
