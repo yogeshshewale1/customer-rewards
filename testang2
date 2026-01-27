@@ -1,64 +1,43 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { AdvertisementService } from '../../services/advertisement.service';
-import { SearchPipe } from '../../pipes/search.pipe';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AdvertisementService } from '../../services/advertisement.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchPipe],
+  imports: [CommonModule, FormsModule],
   template: `
-    <input [(ngModel)]="searchText"
-           placeholder="Search by title or name" />
+    <div class="card">
+      <h3>Edit Advertisement</h3>
 
-    <table>
-      <tr>
-        <th>Title</th>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Actions</th>
-      </tr>
+      <input [(ngModel)]="model.title" />
+      <input [(ngModel)]="model.name" />
+      <input [(ngModel)]="model.category" />
 
-      <tr *ngFor="let ad of service.getAll() | search:searchText">
-        <td>{{ ad.title }}</td>
-        <td>{{ ad.name }}</td>
-        <td>{{ ad.category }}</td>
-        <td>
-          <a (click)="edit(ad.id)">EDIT</a> |
-          <a (click)="remove(ad.id)">DELETE</a>
-        </td>
-      </tr>
-    </table>
-  `,
-  styles: [`
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
-    }
-    a {
-      cursor: pointer;
-      color: blue;
-    }
-  `]
+      <button (click)="update()">UPDATE</button>
+      <button (click)="cancel()">CANCEL</button>
+    </div>
+  `
 })
-export class AdvertisementTableComponent {
-  searchText = '';
+export class EditProductComponent {
+  model: any;
 
   constructor(
-    public service: AdvertisementService,
+    route: ActivatedRoute,
+    private service: AdvertisementService,
     private router: Router
-  ) {}
-
-  remove(id: number) {
-    this.service.delete(id);
+  ) {
+    const id = Number(route.snapshot.paramMap.get('id'));
+    this.model = { ...this.service.getById(id) };
   }
 
-  edit(id: number) {
-    this.router.navigate(['/edit', id]);
+  update() {
+    this.service.update(this.model);
+    this.router.navigate(['/']);
+  }
+
+  cancel() {
+    this.router.navigate(['/']);
   }
 }
