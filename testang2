@@ -1,8 +1,28 @@
-import { Routes } from '@angular/router';
-import { AdvertisementTableComponent } from './components/advertisement-table/advertisement-table.component';
-import { EditProductComponent } from './components/edit-product/edit-product.component';
+import { Injectable } from '@angular/core';
 
-export const routes: Routes = [
-  { path: '', component: AdvertisementTableComponent },
-  { path: 'edit/:id', component: EditProductComponent }
-];
+@Injectable({ providedIn: 'root' })
+export class AdvertisementService {
+  private ads: any[] = [];
+
+  getAll() {
+    return this.ads;
+  }
+
+  add(ad: any) {
+    ad.id = Date.now();
+    this.ads.push(ad);
+  }
+
+  delete(id: number) {
+    this.ads = this.ads.filter(a => a.id !== id);
+  }
+
+  getById(id: number) {
+    return this.ads.find(a => a.id === id);
+  }
+
+  update(updated: any) {
+    const index = this.ads.findIndex(a => a.id === updated.id);
+    this.ads[index] = updated;
+  }
+}
