@@ -1,15 +1,8 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { AdvertisementFormComponent } from './components/advertisement-form/advertisement-form.component';
+import { Routes } from '@angular/router';
+import { AdvertisementTableComponent } from './components/advertisement-table/advertisement-table.component';
+import { EditProductComponent } from './components/edit-product/edit-product.component';
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, AdvertisementFormComponent],
-  template: `
-    <h2>Advertisement Management</h2>
-    <app-advertisement-form></app-advertisement-form>
-    <router-outlet></router-outlet>
-  `
-})
-export class AppComponent {}
+export const routes: Routes = [
+  { path: '', component: AdvertisementTableComponent },
+  { path: 'edit/:id', component: EditProductComponent }
+];
