@@ -1,79 +1,64 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AdvertisementService } from '../../services/advertisement.service';
+import { SearchPipe } from '../../pipes/search.pipe';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-advertisement-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SearchPipe],
   template: `
-    <div class="card">
-      <h3>Add Advertisement</h3>
+    <input [(ngModel)]="searchText"
+           placeholder="Search by title or name" />
 
-      <input placeholder="Title"
-             [(ngModel)]="model.title" />
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
 
-      <input placeholder="Name"
-             [(ngModel)]="model.name" />
-
-      <select [(ngModel)]="model.category">
-        <option value="">Select Category</option>
-        <option *ngFor="let c of categories">{{ c }}</option>
-      </select>
-
-      <textarea placeholder="Description"
-                [(ngModel)]="model.description"></textarea>
-
-      <button (click)="add()"
-              [disabled]="!isValid()">
-        Add Advertisement
-      </button>
-    </div>
+      <tr *ngFor="let ad of service.getAll() | search:searchText">
+        <td>{{ ad.title }}</td>
+        <td>{{ ad.name }}</td>
+        <td>{{ ad.category }}</td>
+        <td>
+          <a (click)="edit(ad.id)">EDIT</a> |
+          <a (click)="remove(ad.id)">DELETE</a>
+        </td>
+      </tr>
+    </table>
   `,
   styles: [`
-    .card {
-      width: 350px;
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    input, select, textarea {
+    table {
       width: 100%;
-      margin: 6px 0;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
       padding: 6px;
     }
-    button {
-      width: 100%;
-      padding: 8px;
-      background: #1976d2;
-      color: white;
-      border: none;
+    a {
       cursor: pointer;
-    }
-    button:disabled {
-      background: gray;
+      color: blue;
     }
   `]
 })
-export class AdvertisementFormComponent {
-  categories = ['Furniture', 'Hardware', 'Mobile'];
+export class AdvertisementTableComponent {
+  searchText = '';
 
-  model: any = {
-    name: 'Yogesh Shewale'
-  };
+  constructor(
+    public service: AdvertisementService,
+    private router: Router
+  ) {}
 
-  constructor(private service: AdvertisementService) {}
-
-  isValid() {
-    return this.model.title &&
-           this.model.name &&
-           this.model.category;
+  remove(id: number) {
+    this.service.delete(id);
   }
 
-  add() {
-    this.service.add({ ...this.model });
-    this.model = { name: 'Yogesh Shewale' };
+  edit(id: number) {
+    this.router.navigate(['/edit', id]);
   }
 }
