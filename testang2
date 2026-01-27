@@ -1,14 +1,8 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
-import { importProvidersFrom } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Routes } from '@angular/router';
+import { AdvertisementTableComponent } from './components/advertisement-table/advertisement-table.component';
+import { EditProductComponent } from './components/edit-product/edit-product.component';
 
-import { AppComponent } from './app/app.component';
-import { routes } from './app/app.routes';
-
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideRouter(routes),
-    importProvidersFrom(FormsModule, ReactiveFormsModule)
-  ]
-}).catch(err => console.error(err));
+export const routes: Routes = [
+  { path: '', component: AdvertisementTableComponent },
+  { path: 'edit/:id', component: EditProductComponent }
+];
