@@ -1,8 +1,7 @@
-import { Routes } from '@angular/router';
-import { AdvertisementTableComponent } from './components/advertisement-table/advertisement-table.component';
-import { EditProductComponent } from './components/edit-product/edit-product.component';
+@Component({
+  selector: 'app-advertisement-form',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './advertisement-form.component.html'
+})
 
-export const routes: Routes = [
-  { path: '', component: AdvertisementTableComponent },
-  { path: 'edit/:id', component: EditProductComponent }
-];
