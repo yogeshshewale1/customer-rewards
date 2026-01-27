@@ -1,36 +1,39 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdvertisementService } from '../../services/advertisement.service';
 
 @Component({
-  selector: 'app-advertisement-form',
   standalone: true,
   imports: [FormsModule],
   template: `
-    <h3>Add Advertisement</h3>
+    <h3>Edit Advertisement</h3>
 
-    <input [(ngModel)]="model.title" placeholder="Title" />
-    <input [(ngModel)]="model.name" placeholder="Name" />
+    <input [(ngModel)]="model.title" />
+    <input [(ngModel)]="model.name" />
 
-    <select [(ngModel)]="model.category">
-      <option *ngFor="let c of categories">{{ c }}</option>
-    </select>
-
-    <textarea [(ngModel)]="model.description"></textarea>
-
-    <button (click)="add()" [disabled]="!model.title">
-      Add
-    </button>
+    <button (click)="update()">UPDATE</button>
+    <button (click)="cancel()">CANCEL</button>
   `
 })
-export class AdvertisementFormComponent {
-  categories = ['Furniture', 'Hardware', 'Mobile'];
-  model: any = { name: 'Yogesh Shewale' };
+export class EditProductComponent {
+  model: any;
 
-  constructor(private service: AdvertisementService) {}
+  constructor(
+    route: ActivatedRoute,
+    private service: AdvertisementService,
+    private router: Router
+  ) {
+    const id = Number(route.snapshot.paramMap.get('id'));
+    this.model = { ...this.service.getById(id) };
+  }
 
-  add() {
-    this.service.add({ ...this.model });
-    this.model = { name: 'Yogesh Shewale' };
+  update() {
+    this.service.update(this.model);
+    this.router.navigate(['/']);
+  }
+
+  cancel() {
+    this.router.navigate(['/']);
   }
 }
