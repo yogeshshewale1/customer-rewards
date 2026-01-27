@@ -1,14 +1,36 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AdvertisementService } from '../../services/advertisement.service';
 
-import { AppComponent } from './app/app.component';
-import { routes } from './app/app.routes';
+@Component({
+  selector: 'app-advertisement-form',
+  standalone: true,
+  imports: [FormsModule],
+  template: `
+    <h3>Add Advertisement</h3>
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideRouter(routes),
-    importProvidersFrom(FormsModule)
-  ]
-}).catch(err => console.error(err));
+    <input [(ngModel)]="model.title" placeholder="Title" />
+    <input [(ngModel)]="model.name" placeholder="Name" />
+
+    <select [(ngModel)]="model.category">
+      <option *ngFor="let c of categories">{{ c }}</option>
+    </select>
+
+    <textarea [(ngModel)]="model.description"></textarea>
+
+    <button (click)="add()" [disabled]="!model.title">
+      Add
+    </button>
+  `
+})
+export class AdvertisementFormComponent {
+  categories = ['Furniture', 'Hardware', 'Mobile'];
+  model: any = { name: 'Yogesh Shewale' };
+
+  constructor(private service: AdvertisementService) {}
+
+  add() {
+    this.service.add({ ...this.model });
+    this.model = { name: 'Yogesh Shewale' };
+  }
+}
