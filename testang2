@@ -1,15 +1,15 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { AdvertisementFormComponent } from './components/advertisement-form/advertisement-form.component';
 
-@Pipe({
-  name: 'search',
-  standalone: true
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, AdvertisementFormComponent],
+  template: `
+    <h2>Advertisement Management</h2>
+    <app-advertisement-form></app-advertisement-form>
+    <router-outlet></router-outlet>
+  `
 })
-export class SearchPipe implements PipeTransform {
-  transform(list: any[], text: string) {
-    if (!text) return list;
-    return list.filter(a =>
-      a.title.toLowerCase().includes(text.toLowerCase()) ||
-      a.name.toLowerCase().includes(text.toLowerCase())
-    );
-  }
-}
+export class AppComponent {}
