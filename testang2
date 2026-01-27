@@ -1,20 +1,6 @@
-@Component({
-  standalone: true,
-  imports: [FormsModule, SearchPipe],
-})
-
-
-
-
-@Component({
-  standalone: true,
-  imports: [FormsModule],
-})
-
-
-
-@Pipe({
-  name: 'search',
-  standalone: true
-})
-export class SearchPipe {}
+table {
+  border-collapse: collapse;
+}
+th, td {
+  padding: 6px;
+}
