@@ -1,43 +1,15 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AdvertisementService } from '../../services/advertisement.service';
+import { Pipe, PipeTransform } from '@angular/core';
 
-@Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  template: `
-    <div class="card">
-      <h3>Edit Advertisement</h3>
-
-      <input [(ngModel)]="model.title" />
-      <input [(ngModel)]="model.name" />
-      <input [(ngModel)]="model.category" />
-
-      <button (click)="update()">UPDATE</button>
-      <button (click)="cancel()">CANCEL</button>
-    </div>
-  `
+@Pipe({
+  name: 'search',
+  standalone: true
 })
-export class EditProductComponent {
-  model: any;
-
-  constructor(
-    route: ActivatedRoute,
-    private service: AdvertisementService,
-    private router: Router
-  ) {
-    const id = Number(route.snapshot.paramMap.get('id'));
-    this.model = { ...this.service.getById(id) };
-  }
-
-  update() {
-    this.service.update(this.model);
-    this.router.navigate(['/']);
-  }
-
-  cancel() {
-    this.router.navigate(['/']);
+export class SearchPipe implements PipeTransform {
+  transform(list: any[], text: string) {
+    if (!text) return list;
+    return list.filter(a =>
+      a.title.toLowerCase().includes(text.toLowerCase()) ||
+      a.name.toLowerCase().includes(text.toLowerCase())
+    );
   }
 }
