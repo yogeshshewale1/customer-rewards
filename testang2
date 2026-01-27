@@ -1,39 +1,15 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AdvertisementService } from '../../services/advertisement.service';
+import { RouterOutlet } from '@angular/router';
+import { AdvertisementFormComponent } from './components/advertisement-form/advertisement-form.component';
 
 @Component({
+  selector: 'app-root',
   standalone: true,
-  imports: [FormsModule],
+  imports: [RouterOutlet, AdvertisementFormComponent],
   template: `
-    <h3>Edit Advertisement</h3>
-
-    <input [(ngModel)]="model.title" />
-    <input [(ngModel)]="model.name" />
-
-    <button (click)="update()">UPDATE</button>
-    <button (click)="cancel()">CANCEL</button>
+    <h2>Advertisement App</h2>
+    <app-advertisement-form></app-advertisement-form>
+    <router-outlet></router-outlet>
   `
 })
-export class EditProductComponent {
-  model: any;
-
-  constructor(
-    route: ActivatedRoute,
-    private service: AdvertisementService,
-    private router: Router
-  ) {
-    const id = Number(route.snapshot.paramMap.get('id'));
-    this.model = { ...this.service.getById(id) };
-  }
-
-  update() {
-    this.service.update(this.model);
-    this.router.navigate(['/']);
-  }
-
-  cancel() {
-    this.router.navigate(['/']);
-  }
-}
+export class AppComponent {}
